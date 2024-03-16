@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../static/CSS.css">
+</head>
+<body class="w-full space-y-5 bg-gray-200 pt-1 pb-1 h-screen w-screen relative"  style="font-family: 'SixtyFour';">
+<nav class="bg-blue-700 text-white p-4">
+    <div class="container mx-auto flex justify-between items-center">
+        <a href="#" class="text-lg font-semibold">MemorInc</a>
+        <div>
+            <a href="/" class="px-4 py-2 hover:bg-blue-700 rounded">Home</a>
+        </div>
+    </div>
+</nav>
+<div class="max-w-xs mx-auto">
+    <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" action="http://localhost:8080/login" method="post">
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                Username
+            </label>
+            <input name="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username">
+        </div>
+        <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                Password
+            </label>
+            <input name="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
+        </div>
+            <button id="btn" disabled class="bg-blue-600 w-full hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                Sign In
+            </button>
+    </form>
+    <div class="hidden rounded bg-red-500 w-3/4 mx-auto text-white" id="flash">{{ flash }}</div>
+</div>
+<footer class="bg-blue-700 text-white p-1 mt-8 absolute bottom-5 w-full">
+    <div class="container mx-auto text-center">
+        <p>© 2023 MemorInc. All rights reserved.</p>
+    </div>
+</footer>
+</body>
+</html>
+<script type="text/javascript" charset="utf-8">
+    const flash = "{{ flash }}"
+    if (flash.length){
+        const flash = document.getElementById("flash")
+        flash.classList.remove("hidden")
+    }
+    const button = document.getElementById("btn")
+    const username = document.getElementById("username")
+    const password = document.getElementById("password")
+    password.addEventListener("input", event => {
+        if (username.value.length > 0 && password.value.length > 0){
+            console.log(username.value.length)
+            console.log(password.value.length)
+        button.disabled = false
+        } else {
+            button.disabled = true
+        }
+
+    })
+    username.addEventListener("input", event => {
+        if (username.value.length > 0 && password.value.length > 0){
+            console.log(username.innerText.length)
+            console.log(password.innerText.length)
+        button.disabled = false
+        } else {
+            button.disabled = true
+        }
+    })
+
+</script>

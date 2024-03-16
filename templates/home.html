@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MemorInc - Enhance Your Memory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../static/CSS.css">
+    <style>
+        body { font-family: 'SixtyFour'; }
+    </style>
+</head>
+<body class="bg-gray-200 flex flex-col justify-between min-h-screen">
+
+<nav class="bg-blue-500 text-white p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+        <a href="#" class="text-lg font-semibold">MemorInc</a>
+        <div class="flex space-x-4">
+            <a href="/" class="px-4 py-2 hover:bg-blue-600 rounded">Home</a>
+            <a href="/play" class="px-4 py-2 hover:bg-blue-600 rounded">Play</a>
+            <a href="/signout" id="signout" class="px-4 py-2 hover:bg-blue-600 rounded">Log Out</a>
+        </div>
+    </div>
+</nav>
+<div id="sub" class="mx-auto w-3/4">
+    <div class="flex space-x-5">
+        <div id="simple" class="shadow-lg w-1/3 p-8 text-2xl rounded border cursor-pointer border-green-500 border-5 text-center hover:scale-105 active:scale-90">Simple Recall</div>
+    <div id="working" class="shadow-lg w-1/3 p-8 border text-2xl rounded cursor-pointer border-orange-500 border-5 text-center hover:scale-105 active:scale-90">Working Memory</div>
+    <div id="complex" class="shadow-lg w-1/3 p-8 border text-2xl rounded cursor-pointer border-red-500 border-5 text-center hover:scale-105 active:scale-90">Complex Recall</div>
+    </div>
+
+</div>
+<div id="main" class="hidden">
+<div class="w-full flex">
+    <div id="time" class="text-center w-1/4 space-y-4 relative">
+    <div class="rounded shadow-lg  border border-black w-3/4 h-[20rem] absolute right-0">
+        <h1 id="timer1" class="text-center text-[8rem]  text-red-600 my-12">2</h1>
+            <button id="timerButton" class="w-full py-1 bg-green-500 rounded-b font-bold text-white cursor-pointer  hover:text-[1.25rem] active:bg-green-600">Ready</button>
+
+    </div>
+    </div>
+<div style=" display: inline-block;" class="w-[640px] mx-auto shadow-lg">
+    <video id="webcam" class=" relative rounded-t" autoplay playsinline style="display: block; width: 640px; height: 480px;"></video>
+    <canvas id="overlay" class="z-10 absolute top-20"  width="640" height="480" style=""></canvas>
+</div>
+<div id="tracker" class="text-center text-black w-1/4 ">
+    <div class="rounded shadow-lg  border border-black w-3/4 h-[20rem] space-y-4">
+        <h1 class="text-3xl p-1" >{{ username }}</h1>
+        <h1 id="lifetime" class="text-2xl p-1">Lifetime: <span id="lifetimeA">{{ lifetimeA }}</span>/<span id="lifetimeB" >{{ lifetimeB }}</span></h1>
+        <h2 class="text-xl p-1">Rank:<span id="rank" >{{ rank }}</span></h2>
+        <h3>Exp: <<span id="exp" >{{ exp }}</span>></h3>
+        <p></p>
+    </div>
+</div>
+</div>
+<div id="message" class="w-full text-center text-l"></div>
+
+<div id="answers" class="block">
+    <div id="" class="flex w-1/2 mx-auto space-x-6 p-2 ">
+    <div id="0"></div>
+    <div id="1"></div>
+    <div id="2"></div>
+    <div id="3"></div>
+    <div id="4"></div>
+    <div id="5"></div>
+    <div id="6"></div>
+        <div id="7"></div>
+    <div id="8"></div>
+    <div id="9"></div>
+</div>
+    <div id="restart" class="hidden w-1/4 mx-auto block">
+    <button class="bg-blue-500 text-white p-3 text-md w-full mx-auto rounded">Play Again</button>
+    </div>
+
+<div id="guess" class="relative flex pt-[2rem] w-1/2 mx-auto space-x-6 ">
+    <div id="hider" class="absolute bg-gray-200"></div>
+</div>
+</div>
+</div>
+
+</body>
+<footer class="bg-blue-500 text-white p-4 text-center mt-8">
+    <p>© 2023 MemorInc. All rights reserved.</p>
+</footer>
+</html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+<script type="text/javascript" charset="utf-8">
+    const guess = document.getElementById("guess");
+    const message = document.getElementById("message")
+    const lifetimeA = document.getElementById("lifetimeA")
+    const lifetimeB = document.getElementById("lifetimeB")
+    const rank = document.getElementById("rank")
+    const exp = document.getElementById("exp")
+    const restart = document.getElementById("restart")
+    let to_guess = 0
+    let total_guessed = 0
+   const assign_shapes = function(inputs) {
+    const guess = document.getElementById('guess'); // Ensure 'guess' is a valid DOM element
+    to_guess = inputs.length
+    inputs.forEach(val => {
+        let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("width", "100");
+        svg.setAttribute("height", "100");
+        svg.setAttribute("viewBox", "0 0 100 100");
+
+        let shape;
+        switch(val) {
+            case 0:
+                shape = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                shape.setAttribute("cx", "50");
+                shape.setAttribute("cy", "50");
+                shape.setAttribute("r", "30");
+                shape.setAttribute("fill", "orange")
+                shape.setAttribute("stroke", "black")
+                break;
+            case 1:
+                shape = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                shape.setAttribute("points", "50,16 85,85 15,85 50,16");
+                shape.setAttribute("fill", "green");
+                shape.setAttribute("stroke", "black");
+                break;
+            case 2:
+                shape = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                shape.setAttribute("points", "50,10  61,40  95,40  67,60  78,90  50,70  22,90  33,60  5,40  39,40");
+                shape.setAttribute("fill", "pink");
+                shape.setAttribute("stroke", "black");
+                break;
+            case 3:
+                shape = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                shape.setAttribute("x", "10");
+                shape.setAttribute("y", "10");
+                shape.setAttribute("width", "80");
+                shape.setAttribute("height", "80");
+                shape.setAttribute("fill", "blue")
+                shape.setAttribute("stroke", "black")
+                break;
+            default:
+                // Handle default case if necessary
+                break;
+        }
+
+        if (shape) {
+            svg.appendChild(shape);
+            guess.appendChild(svg);
+        }
+    });
+};
+
+
+let time = 2
+const timer1 = document.getElementById('timer1');
+
+    const timerButton = document.getElementById('timerButton');
+    const drawLine = function () {
+        const canvas = document.getElementById('overlay');
+        const context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        time = 2
+        timer1.innerText = "2"
+
+    // Set styles for the oval
+    context.strokeStyle = 'blue'; // Green color
+        context.strokeWidth = '2'
+    const centerX = canvas.width / 12;
+    const centerY = canvas.height / 4;
+    const radiusX = 200; // Radius of the oval in the X direction
+    const radiusY = 200; // Radius of the oval in the Y direction
+    context.beginPath();
+    context.rect(centerX, centerY, radiusX, radiusY);
+    context.stroke();
+    context.lineWidth = 4;
+        }
+
+
+    const blobber = function () {
+        const canvas = document.getElementById('overlay');
+    const video = document.getElementById('webcam');
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const startX = (canvas.width / 12) ;
+    const startY = (canvas.height / 4) ;
+    const width = 200;
+    const height = 200;
+
+    // Get the image data for the oval area
+    const imageData = context.getImageData(startX, startY, width, height);
+
+    // Create a new canvas to hold the cropped image
+    const croppedCanvas = document.createElement('canvas');
+    const croppedContext = croppedCanvas.getContext('2d');
+    croppedCanvas.width = width;
+    croppedCanvas.height = height;
+
+    // Put the cropped image data onto the cropped canvas
+    croppedContext.putImageData(imageData, 0, 0);
+    const dataURL = croppedCanvas.toDataURL('image/jpeg');
+    {#const test = document.getElementById("test")#}
+        {#test.src = dataURL#}
+        return croppedCanvas.toBlob(function(blob) {
+            socket.emit("stream", {blob: blob});
+        }, 'image/jpeg')
+    }
+
+
+    const countdown = function () {
+        lifetimeA.classList.remove("text-green-500")
+        lifetimeB.classList.remove("text-green-500")
+        exp.classList.remove("text-green-500")
+        lifetimeA.classList.remove("text-red-500")
+        lifetimeB.classList.remove("text-red-500")
+        exp.classList.remove("text-red-500")
+        if (to_guess > total_guessed){
+            console.log(to_guess, total_guessed)
+            if (time === 0){
+                total_guessed += 1
+            blobber()
+        }
+        timer1.innerText = time.toString()
+        time--;
+       if (time >= 0){
+           setTimeout(function () {
+            countdown()
+        }, 1000)
+       }
+        }
+    }
+    timerButton.addEventListener("click", countdown)
+
+    const isRestart = function(){
+            if (to_guess <= total_guessed){
+
+                {#const answers = document.getElementById("answers")#}
+                {#answers.classList.add("hidden")#}
+                guess.classList.add("hidden")
+                restart.classList.remove("hidden")
+                restart.addEventListener("click", ev => {
+                    window.location.reload()
+                })
+
+            }
+    }
+
+    let socket = io();
+        const main = document.getElementById("main")
+        const sub = document.getElementById("sub")
+      const simple = document.getElementById("simple")
+    const working = document.getElementById("working")
+    const complex = document.getElementById("complex")
+    simple.addEventListener('click', event => {
+            socket.emit("message", {difficulty: 0})
+        sub.classList.add("hidden")
+        main.classList.remove("hidden")
+    })
+    working.addEventListener('click', event => {
+            socket.emit("message", {difficulty: 1})
+        sub.classList.add("hidden")
+        main.classList.remove("hidden")
+    })
+    complex.addEventListener('click', event => {
+            socket.emit("message", {difficulty: 2})
+        sub.classList.add("hidden")
+        main.classList.remove("hidden")
+
+    })
+    socket.on('response', (data) => {
+        const current = document.getElementById(data['currentAnswer'].toString())
+                if (data['success']){
+                    current.style.color = "green"
+                    current.innerText = "Correct"
+                    exp.innerText = (parseInt(exp.innerText) + 100).toString()
+                    exp.classList.add("text-green-500")
+                    lifetimeA.innerText = (parseInt(lifetimeA.innerText) + 1).toString()
+                    lifetimeA.classList.add("text-green-500")
+                    lifetimeB.innerText = (parseInt(lifetimeB.innerText) + 1).toString()
+                    lifetimeB.classList.add("text-green-500")
+                } else if (data['answers']){
+                    assign_shapes(data['answers'])
+                } else {
+                    current.style.color = "red"
+                    current.innerText = "WRONG"
+                    exp.innerText = (parseInt(exp.innerText) - 100).toString()
+                    exp.classList.add("text-red-500")
+                    lifetimeA.classList.add("text-red-500")
+                    lifetimeB.innerText = (parseInt(lifetimeB.innerText) + 1).toString()
+                    lifetimeB.classList.add("text-red-500")
+                    
+                }
+                setTimeout(drawLine, 2000)
+                isRestart()
+        }
+    )
+
+    socket.on('connect', function(message) {
+        socket.emit('message', {data: 'I\'m connected!'});
+    });
+    if (navigator.mediaDevices.getUserMedia) {
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(stream) {
+      let video = document.getElementById('webcam');
+      video.srcObject = stream;
+      drawLine()
+
+    })
+    .catch(function(error) {
+      console.log("Something went wrong!", error);
+    });
+
+}
+</script>

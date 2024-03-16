@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MemorInc - Sharpen Your Memory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../static/CSS.css">
+    <style>
+        body { font-family: 'SixtyFour'; }
+    </style>
+</head>
+<body class="bg-gray-200 flex flex-col justify-between min-h-screen">
+
+<nav class="bg-blue-500 text-white p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+        <a href="#" class="text-lg font-semibold">MemorInc</a>
+        <div>
+            <a href="/" class="px-4 py-2 hover:bg-blue-600 rounded">Home</a>
+            <a href="/play" class="px-4 py-2 hover:bg-blue-600 rounded">Play</a>
+            <a href="/signout" id="signout" class="hidden px-4 py-2 hover:bg-blue-600 rounded">Log Out</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container mx-auto px-4 py-8">
+    <div class="hidden rounded mb-5 w-3/4 mx-auto text-white text-center p-5" id="flash">{{ flash }}</div>
+    <section class="mb-8">
+        <h1 class="text-4xl font-bold text-center mb-4">Welcome to MemorInc</h1>
+        <p class="text-lg text-center">A dedicated platform by Therapy Inc to aid in enhancing your memory through engaging and adaptive games. Perfect for educators, parents, and individuals seeking to strengthen cognitive skills.</p>
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white rounded shadow p-6">
+            <h2 class="font-semibold text-xl">Our Mission</h2>
+            <p>At MemorInc, we strive to support individuals coping with memory loss or impairment by providing a suite of interactive and accessible memory games designed to stimulate cognitive functions.</p>
+        </div>
+
+        <div class="bg-white rounded shadow p-6">
+            <h2 class="font-semibold text-xl">Choose Your Challenge</h2>
+            <p>From beginner to advanced, our platform offers a range of difficulties to cater to everyone's needs. Get started today and track your progress!</p>
+        </div>
+    </section>
+</main>
+
+<footer class="bg-blue-500 text-white p-4 text-center">
+    <p>© 2023 MemorInc, a Therapy Inc company. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
+<script type="text/javascript" charset="utf-8">
+    const session = "{{ session }}"
+    if (session !== "False"){
+        console.log(session)
+        document.getElementById("signout").classList.remove("hidden")
+    }
+     const flashString = "{{ flash }}"
+    if (flashString.length){
+        const flash = document.getElementById("flash")
+        flash.classList.remove("hidden")
+        if (flashString === "Logged Out"){
+            flash.classList.add("bg-red-500")
+        } else {
+            flash.classList.add("bg-green-500")
+        }
+    }
+</script>
